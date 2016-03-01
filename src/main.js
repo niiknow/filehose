@@ -3,6 +3,7 @@ var csv = require('csv');
 var path = require('path');
 var createBatchRequestStream = require('batch-request-stream');
 var mkdirp = require('mkdirp');
+var _ = require('lodash');
 var config = {};
 
 function exists(filePath, isFolder) {
@@ -14,47 +15,61 @@ function exists(filePath, isFolder) {
   }
 }
 
-function appendObject(obj) {
-  var outFile = config.getDestPath ? config.getDestFile(record) : './out/out.json';
-  var configData = '[]';
+function appendObject(items, cb) {
+  var $that = this;
+  _.each(items, function(obj, k) {
+    var config = $that.config;
+    var outFile = config.getDestFile ? config.getDestFile(obj) : './out/out.json';
+    var configData = '[]';
+    outFile = path.resolve(outFile);
 
-  if (!exists(outFile)) {
-    configData = fs.readFileSync(outFile);
-  }
+    if (exists(outFile)) {
+      configData = fs.readFileSync(outFile);
+    }
 
-  var basePath = path.dirname(outFile);
-  if (!exists(basePath, true)) {
-    mkdirp(basePath);
-  }
+    var basePath = path.dirname(outFile);
+    if (!exists(basePath, true)) {
+      console.log(basePath);
+      mkdirp.sync(basePath);
+    }
 
-  var config = JSON.parse(outFile);
-  config.push(obj);
-  var configJSON = JSON.stringify(config);
-  fs.writeFileSync(outFile, configJSON);
+    var config = JSON.parse(configData);
+    config.push(obj);
+    var configJSON = JSON.stringify(config);
+    fs.writeFileSync(outFile, configJSON);
+  });
+
+  cb();
 }
-
-var batchRequestStream = createBatchRequestStream({
-  request: appendObject,
-  batchSize: 200,
-  maxLiveRequests: 1,
-  streamOptions: {
-    objectMode: true
-  }
-});
 
 module.exports = function(filePath, configFile) {
   config = require(configFile);
+  var batchRequestStream = createBatchRequestStream({
+    request: appendObject,
+    batchSize: 100,
+    maxLiveRequests: 2,
+    streamOptions: {
+      objectMode: true
+    },
+    config: config
+  });
 
   var readStream = fs.createReadStream(filePath);
   readStream.on('open', function() {
     readStream.pipe(csv.parse(config.input.options))
       .pipe(csv.transform(function(row) {
-        return config.transform(row, filePath);
-      }))
-      .pipe(batchRequestStream)
+        var record = config.transform(row, filePath);
+        return record;
+      })).pipe(batchRequestStream);;
   });
 
   readStream.on('end', config.finally || function() {
+      console.log('finish');
       process.exit(0);
     });
+
+  setInterval(function() {
+    // noop
+    var a = 1;
+  }, 1000);
 };

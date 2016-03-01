@@ -36,14 +36,14 @@ module.exports = {
     var fileSource = fileParts[0].toLowerCase();
 
     // get the schema from the filesource and create a record
-    var schemaIdx = shema[fileSource].split(',');
+    var schemaIdx = schema[fileSource].split(',');
     var newRecord = {
       Source: fileSource
     };
     _.each(schemaIdx, function(v, k) {
       // make sure the key is trimmed just in case user added space
       var cleanKey = k.replace(/^\s+|\s$/gi, '');
-      newRecord[k] = v;
+      newRecord[k] = row[k];
     });
 
     // return the new record

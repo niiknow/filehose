@@ -1,5 +1,7 @@
 # filehose
-filehose is a firehose for parsing and split individual csv file into mulitple files.
+filehose is for parsing and split individual csv file into mulitple files.
+
+It's like a firehose for file.
 
 ## LICENSE
 
