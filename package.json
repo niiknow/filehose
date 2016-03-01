@@ -1,0 +1,35 @@
+{
+  "name": "filehose",
+  "description": "extract csv and into multilple files",
+  "version": "0.0.1",
+  "repository": "niiknow/filehose",
+  "author": "Friends friends@niiknow.org",
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "etl"
+  ],
+  "dependencies": {
+    "batch-request-stream": "*",
+    "csv": "*",
+    "debounce": "*",
+    "lodash": "^4.5.1",
+    "mkdirp": "*",
+    "moment": "*",
+    "yargs": "^4.2.0"
+  },
+  "devDependencies": {
+    "istanbul": "^0.3.2",
+    "mocha": "^2.0.1",
+    "mocha-lcov-reporter": "0.0.1",
+    "should": "^5.0.0",
+    "stream-array": "^1.0.1",
+    "stream-assert": "^2.0.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha"
+  },
+  "license": "MIT"
+}
