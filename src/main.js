@@ -15,28 +15,58 @@ function exists(filePath, isFolder) {
   }
 }
 
+function arrayToCsv(arr, delimiter) {
+  return _.map(arr, function(value) {
+    if (typeof value === "string") {
+
+      // handle numeric and empty string
+      if (/^\d+$/gi.test(value)) {
+        return value;
+      } else if (!value) {
+        return value;
+      }
+
+      // escape a string with stringify
+      value = JSON.stringify(value);
+    }
+    return value;
+  }).join(delimiter || ',');
+}
+
+function writeFile(obj, outFile, cout) {
+  outFile = path.resolve(outFile);
+
+  var basePath = path.dirname(outFile);
+  if (!exists(basePath, true)) {
+    mkdirp.sync(basePath);
+  }
+
+  if (!exists(outFile)) {
+    fs.writeFileSync(
+      outFile,
+      arrayToCsv(cout.headers, cout.options.delimiter) + cout.options.rowDelimiter
+    );
+  }
+
+  var arr = _.map(cout.headers, function(k) {
+    return obj[k];
+  });
+
+  fs.appendFileSync(
+    outFile,
+    arrayToCsv(arr, cout.options.delimiter) + cout.options.rowDelimiter
+  );
+}
+
 function appendObject(items, cb) {
   var $that = this;
   _.each(items, function(obj, k) {
     var config = $that.config;
-    var outFile = config.getDestFile ? config.getDestFile(obj) : './out/out.json';
-    var configData = '[]';
-    outFile = path.resolve(outFile);
-
-    if (exists(outFile)) {
-      configData = fs.readFileSync(outFile);
-    }
-
-    var basePath = path.dirname(outFile);
-    if (!exists(basePath, true)) {
-      console.log(basePath);
-      mkdirp.sync(basePath);
-    }
-
-    var config = JSON.parse(configData);
-    config.push(obj);
-    var configJSON = JSON.stringify(config);
-    fs.writeFileSync(outFile, configJSON);
+    var cout = config.output;
+    var outFiles = config.getDestFiles ? config.getDestFiles(obj) : [];
+    _.each(outFiles, function(v, k) {
+      writeFile(obj, v, cout);
+    });
   });
 
   cb();
@@ -47,7 +77,7 @@ module.exports = function(filePath, configFile) {
   var batchRequestStream = createBatchRequestStream({
     request: appendObject,
     batchSize: 100,
-    maxLiveRequests: 2,
+    maxLiveRequests: 100,
     streamOptions: {
       objectMode: true
     },
@@ -63,13 +93,15 @@ module.exports = function(filePath, configFile) {
       })).pipe(batchRequestStream);;
   });
 
-  readStream.on('end', config.finally || function() {
-      console.log('finish');
-      process.exit(0);
-    });
+  readStream.on('end', function() {
+    if (config.finally) {
+      config.finally();
+    }
+
+    process.exit(0);
+  });
 
   setInterval(function() {
     // noop
-    var a = 1;
   }, 1000);
 };

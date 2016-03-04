@@ -25,8 +25,21 @@ var schema = {
   harry: 'Id,BirthDate,LastName,FirstName'
 };
 
+var output = {
+  options: {
+    delimiter: ',',
+    rowDelimiter: '\n'
+  },
+  headers: [
+    "Id",
+    "FirstName",
+    "LastName"
+  ]
+};
+
 module.exports = {
   input: input,
+  output: output,
   transform: function(row, fullPath) {
     // get the filename
     var fileName = path.basename(fullPath);
@@ -50,19 +63,21 @@ module.exports = {
     return newRecord;
   },
   /**
-   * get the destination/output file name base on row data
-   * example: ./out/{tom,dick,harry}/recordId.json
+   * get the destination/output file names base on row data
+   * example: [./out/{tom,dick,harry}/recordId.json]
+   * this method return an array of file path or an empty array
+   * if you do not want to persist the record
    * @param  {[type]} row the record
-   * @return {[type]}     where to save the file
+   * @return {[type]}     an array of file paths
    */
-  getDestFile: function(row) {
+  getDestFiles: function(row) {
     // this is where you can configure your out path
     var basePath = './out';
     var filePath = path.join(basePath, row.Source);
-    return path.join(filePath, row.Id + '.json');
+    return [path.join(filePath, row.Id + '.json')];
   },
   finally: function() {
-    // execute at the end
+    // do something you want before exit
     process.exit(0);
   }
 };
