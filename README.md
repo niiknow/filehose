@@ -3,6 +3,14 @@ filehose is for parsing and split individual csv file into mulitple files.
 
 It's like a firehose for file.
 
+To install and run:
+```
+npm -g filehose
+filehose config.js sourceFile.csv
+```
+
+See example.config.json for more.
+
 ## LICENSE
 
 (MIT License)
