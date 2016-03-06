@@ -60,6 +60,11 @@ function writeFile(obj, outFile, cout) {
 
 function appendObject(items, cb) {
   var $that = this;
+
+  if ($that.config.batchStart) {
+    $that.config.batchStart(items);
+  }
+
   _.each(items, function(obj, k) {
     var config = $that.config;
     var cout = config.output;
@@ -68,6 +73,10 @@ function appendObject(items, cb) {
       writeFile(obj, v, cout);
     });
   });
+
+  if ($that.config.batchEnd) {
+    $that.config.batchEnd(items);
+  }
 
   cb();
 }
@@ -94,11 +103,14 @@ module.exports = function(filePath, configFile) {
   });
 
   readStream.on('end', function() {
-    if (config.finally) {
-      config.finally();
-    }
+    // wait for the batch to complete
+    setTimeout(function() {
+      if (config.finally) {
+        config.finally();
+      }
 
-    process.exit(0);
+      process.exit(0);
+    }, 1000);
   });
 
   setInterval(function() {
