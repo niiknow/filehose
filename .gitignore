@@ -35,5 +35,5 @@ build
 *.node
 components
 coverage
-override.js
+config.js
 out/

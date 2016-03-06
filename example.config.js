@@ -1,6 +1,7 @@
 var path = require('path');
 var _ = require('lodash');
 var moment = require('moment');
+var startTime = new Date();
 
 var input = {
   options: {
@@ -64,7 +65,7 @@ module.exports = {
   },
   /**
    * get the destination/output file names base on row data
-   * example: [./out/{tom,dick,harry}/recordId.json]
+   * example: [./out/{tom,dick,harry}/recordId.csv]
    * this method return an array of file path or an empty array
    * if you do not want to persist the record
    * @param  {[type]} row the record
@@ -74,10 +75,19 @@ module.exports = {
     // this is where you can configure your out path
     var basePath = './out';
     var filePath = path.join(basePath, row.Source);
-    return [path.join(filePath, row.Id + '.json')];
+    return [path.join(filePath, row.Id + '.csv')];
   },
   finally: function() {
-    // do something you want before exit
+    var endTime = new Date();
+    // write out summary
+    var summary = {
+      startTime: moment(startTime).utc().format(),
+      endTime: moment(endTime).utc().format(),
+      duration: (endTime - startTime) / 1000
+    };
+    console.log(JSON.stringify(summary, null, 2));
+
+    // do something else before exit
     process.exit(0);
   }
 };
