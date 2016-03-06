@@ -1,7 +1,7 @@
 {
   "name": "filehose",
   "description": "extract csv and into multilple files",
-  "version": "0.5.0",
+  "version": "0.1.0",
   "repository": "niiknow/filehose",
   "author": "Friends friends@niiknow.org",
   "files": [

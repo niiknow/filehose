@@ -9,7 +9,9 @@ npm -g filehose
 filehose config.js sourceFile.csv
 ```
 
-See example.config.json for more.
+See example.config.js for configuration details.
+
+For parsing csv configuration, see: https://github.com/wdavidw/node-csv
 
 ## LICENSE
 
