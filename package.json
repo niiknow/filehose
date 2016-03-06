@@ -2,11 +2,11 @@
   "name": "filehose",
   "description": "extract csv and into multilple files",
   "version": "0.1.0",
-  "repository": "niiknow/filehose",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niiknow/filehose.git"
+  },
   "author": "Friends friends@niiknow.org",
-  "files": [
-    "src/main.js"
-  ],
   "keywords": [
     "etl"
   ],
@@ -30,5 +30,13 @@
     "test": "mocha",
     "coverage": "istanbul cover _mocha"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/niiknow/filehose/issues"
+  },
+  "bin": {
+    "filehose": "./bin/filehose"
+  },
+  "homepage": "https://github.com/niiknow/filehose#readme",
+  "main": "src/index.js"
 }
