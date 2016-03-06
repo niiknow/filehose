@@ -1,7 +1,5 @@
 # filehose
-filehose is for parsing and split individual csv file into mulitple files.
-
-It's like a firehose for file.
+filehose is for parsing csv into mulitple files.  It's like a firehose for file.
 
 To install and run:
 ```

@@ -1,7 +1,7 @@
 {
   "name": "filehose",
-  "description": "extract csv and into multilple files",
-  "version": "0.1.0",
+  "description": "extract csv into multilple files",
+  "version": "0.1.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/niiknow/filehose.git"
